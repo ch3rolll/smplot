@@ -1,11 +1,11 @@
 import unittest
 
-import gmplot
+import smplot
 
 class TestMarkers(unittest.TestCase):
 
     def setUp(self):
-        self.gmap = gmplot.GoogleMapPlotter(0, 0, 0)
+        self.gmap = smplot.GoogleSatelliteMapPlot(0, 0, 0)
 
     def test_marker_stores_lat_lon(self):
         self.gmap.marker(1, 11)
