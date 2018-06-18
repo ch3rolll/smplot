@@ -8,8 +8,8 @@ import warnings
 
 from collections import namedtuple
 
-from gmplot.color_dicts import mpl_color_map, html_color_codes
-from gmplot.google_maps_templates import SYMBOLS, CIRCLE
+from smplot.color_dicts import mpl_color_map, html_color_codes
+from smplot.google_maps_templates import SYMBOLS, CIRCLE
 
 
 Symbol = namedtuple('Symbol', ['symbol', 'lat', 'long', 'size'])
@@ -26,11 +26,13 @@ def safe_iter(var):
         return [var]
 
 
-class GoogleMapPlotter(object):
+class GoogleSatelliteMapPlot(object):
 
-    def __init__(self, center_lat, center_lng, zoom, apikey=''):
+    def __init__(self, center_lat, center_lng, zoom, map_h = 256, map_w = 256, apikey=''):
         self.center = (float(center_lat), float(center_lng))
         self.zoom = int(zoom)
+        self.map_h = int(map_h)
+        self.map_w = int(map_w)
         self.apikey = str(apikey)
         self.grids = None
         self.paths = []
@@ -197,8 +199,8 @@ class GoogleMapPlotter(object):
         setting the image container
         :return: None
         Example use:
-        import gmplot
-        gmap = gmplot.GoogleMapPlotter(37.766956, -122.438481, 13)
+        import smplot
+        gmap = smplot.GoogleSatelliteMapPlot(37.766956, -122.438481, 13)
         bounds_dict = {'north':37.832285, 'south': 37.637336, 'west': -122.520364, 'east': -122.346922}
         gmap.ground_overlay('http://explore.museumca.org/creeks/images/TopoSFCreeks.jpg', bounds_dict)
         gmap.draw("my_map.html")
@@ -236,7 +238,7 @@ class GoogleMapPlotter(object):
             '<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />\n')
         f.write(
             '<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>\n')
-        f.write('<title>Google Maps - gmplot </title>\n')
+        f.write('<title>Google Maps - smplot </title>\n')
         if self.apikey:
             f.write('<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=true_or_false&key=%s"></script>\n' % self.apikey )
         else:
@@ -252,13 +254,16 @@ class GoogleMapPlotter(object):
         self.write_shapes(f)
         self.write_heatmap(f)
         self.write_ground_overlay(f)
+        
         f.write('\t}\n')
         f.write('</script>\n')
         f.write('</head>\n')
         f.write(
             '<body style="margin:0px; padding:0px;" onload="initialize()">\n')
+#         f.write(
+#             '\t<div id="map_canvas" style="width: 100%; height: 100%;"></div>\n')
         f.write(
-            '\t<div id="map_canvas" style="width: 100%; height: 100%;"></div>\n')
+            '\t<div id="map_canvas" style="width: %d; height: %d;"></div>\n' % (self.map_w, self.map_h))
         f.write('</body>\n')
         f.write('</html>\n')
         f.close()
@@ -321,7 +326,7 @@ class GoogleMapPlotter(object):
         f.write('\t\tvar myOptions = {\n')
         f.write('\t\t\tzoom: %d,\n' % (self.zoom))
         f.write('\t\t\tcenter: centerlatlng,\n')
-        f.write('\t\t\tmapTypeId: google.maps.MapTypeId.ROADMAP\n')
+        f.write('\t\t\tmapTypeId: google.maps.MapTypeId.SATELLITE\n')
         f.write('\t\t};\n')
         f.write(
             '\t\tvar map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);\n')
@@ -450,8 +455,8 @@ class GoogleMapPlotter(object):
 
 if __name__ == "__main__":
 
-    mymap = GoogleMapPlotter(37.428, -122.145, 16)
-    # mymap = GoogleMapPlotter.from_geocode("Stanford University")
+    mymap = GoogleSatelliteMapPlot(37.428, -122.145, 16)
+    # mymap = GoogleSatelliteMapPlot.from_geocode("Stanford University")
 
     mymap.grid(37.42, 37.43, 0.001, -122.15, -122.14, 0.001)
     mymap.marker(37.427, -122.145, "yellow")
