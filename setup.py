@@ -10,7 +10,7 @@ setup(
     name = 'smplot',
     version = __version__,
     author = 'Qi Fu',
-    author_email = 'qi@xmotors.ai',
+    author_email = 'cherolfu@gmail.com',
     url = 'https://github.com/vgm64/gmplot',
     description = 'Plotting data with Google Satellite Maps, Thanks gmplot!!',
     long_description=read('README.rst'),
